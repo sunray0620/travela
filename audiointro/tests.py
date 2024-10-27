@@ -11,4 +11,4 @@ class AudioIntroViewsTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'myapp/book_detail.html')
-        self.assertContains(response, "audiointro")
+        self.assertContains(response, "test_audio_intro")
