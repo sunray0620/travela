@@ -1,7 +1,9 @@
 
+API_KEY = 'AI'
+
 SERVICE_ACCT_INFO = {
     'type': 'service_account',
-    'project_id': 'test-project',
+    'project_id': 'procon-1',
     'private_key_id': '',
     'private_key': '',
     'client_email': '',
