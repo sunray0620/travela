@@ -32,7 +32,7 @@ class GenerativeLanguageClient:
             }]
         }
         resp = send_http_request(
-            method='POST', url=gemini_url, data=None, json=request, headers=headers
+            method='POST', url=gemini_url, json=request, headers=headers
         )
         resp = resp.json()
         return resp['candidates'][0]['content']['parts'][0]['text']
