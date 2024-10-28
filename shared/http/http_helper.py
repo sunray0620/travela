@@ -1,24 +1,31 @@
+'''
+This module sends http requests.
+'''
+
+from typing import Dict, Optional
 import requests
-from typing import Dict
 
-def send_http_get_request(url: str, headers: Dict) -> str:
+DEFAULT_TIMEOUT = 60
+
+def send_http_request(
+    url: str,
+    method: str = 'GET',
+    headers: Optional[Dict[str, str]] = None,
+    data: Optional[Dict[str, str]] = None,
+    json: Optional[Dict] = None,
+) -> requests.Response:
+    '''Send a POST http request, and return response.'''
     try:
-        response = requests.get(url=url, headers=headers)
-        if response.ok:
-            return response.text
-        else:
-            print(f'Failed to get data. Status code: {response.status_code}')
-            print(response.text)
+        response = requests.request(
+            method=method,
+            url=url,
+            data=data,
+            json=json,
+            headers=headers,
+            timeout=DEFAULT_TIMEOUT,
+        )
+        response.raise_for_status()  # Raise an HTTPError if the response status code is 4xx/5xx
+        return response
     except requests.exceptions.RequestException as e:
         print(f'An error occurred: {e}')
-
-def send_http_post_request(url: str, data, json, headers: Dict) -> str:
-    try:
-        response = requests.post(url, data=data, json=json, headers=headers)
-        if response.ok:
-            return response.text
-        else:
-            print(f'Failed to post data. Status code: {response.status_code}')
-            print(response.text)
-    except requests.exceptions.RequestException as e:
-        print(f'An error occurred: {e}')
+        raise
