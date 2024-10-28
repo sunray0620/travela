@@ -1,7 +1,6 @@
 '''
 This module sends http requests.
 '''
-
 from typing import Dict, Optional
 import requests
 
