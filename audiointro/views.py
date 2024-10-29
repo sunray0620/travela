@@ -1,6 +1,7 @@
 '''
 The module that contains the audio intro views.
 '''
+import json
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -35,8 +36,12 @@ def audio_intro(request):
         return render(request, 'audiointro/get_audio_intro.html')
 
     # Handle the POST request here
+    data = json.loads(request.body)
+    query = data.get('query', '')
+
     res = {
-        'result_text': 'b',
-        'result_mp3': 'c',
+        'query': query,
+        'result_text': 'result_text',
+        'result_audio': 'result_audio',
     }
     return JsonResponse(res)

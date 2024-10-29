@@ -9,7 +9,7 @@
     <h2>Query</h2>
     <form>
         <textarea type="text" id="query" name="query" style="width:400px;height:100px;resize:none;"></textarea><br>
-        <button style="width:400px;" type="button" onclick="alert('Go button clicked!')">Go</button><br><br>
+        <button style="width:400px;" type="button" onclick="sendPostRequest()">Go</button><br><br>
     </form>
 
     <h2>Result</h2>
@@ -19,5 +19,29 @@
     </audio><br>
     <textarea id="result" name="result" style="width:400px;height:500px;resize:none;" readonly></textarea><br><br>
 </body>
+
+<script>
+    function sendPostRequest() {
+        const queryValue = document.getElementById('query').value;
+        if (!queryValue) {
+            return; // Do nothing if queryValue is empty
+        }
+        
+        fetch('/audiointro/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: queryValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').value = JSON.stringify(data, null, 2);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 </html>
 
