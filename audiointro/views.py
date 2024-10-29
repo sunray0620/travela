@@ -8,22 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from audiointro.libs.audio_intro_retriever import AudioIntroRetriever
 from shared.gcloud_client.generativelanguage_client import GenerativeLanguageClient
-
-
-def index(request):
-    '''index view.'''
-    prompt = request.GET.get('prompt', None)
-    if not prompt:
-        return JsonResponse({'content': 'error: cannot find prompt.'})
-
-    generativelanguage_client = GenerativeLanguageClient()
-    audio_intro_retriever = AudioIntroRetriever(generativelanguage_client)
-    gemini_response = audio_intro_retriever.get_audio_intro(prompt)
-    response = {
-        'content': gemini_response
-    }
-
-    return JsonResponse(response)
+from shared.gcloud_client.texttospeech_client import TextToSpeechClient
 
 
 @csrf_exempt  # Use this only if you're testing locally and don’t want to handle CSRF tokens.
@@ -39,9 +24,8 @@ def audio_intro(request):
     data = json.loads(request.body)
     query = data.get('query', '')
 
-    res = {
-        'query': query,
-        'result_text': 'result_text',
-        'result_audio': 'result_audio',
-    }
-    return JsonResponse(res)
+    generativelanguage_client = GenerativeLanguageClient()
+    texttospeech_client = TextToSpeechClient()
+    audio_intro_retriever = AudioIntroRetriever(generativelanguage_client, texttospeech_client)
+    resp = audio_intro_retriever.get_audio_intro(query)
+    return JsonResponse(resp)
