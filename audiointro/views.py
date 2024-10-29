@@ -1,10 +1,13 @@
 '''
 The module that contains the audio intro views.
 '''
-from django.http import JsonResponse
+from django.http import HttpResponseNotAllowed, JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 from audiointro.libs.audio_intro_retriever import AudioIntroRetriever
 from shared.gcloud_client.generativelanguage_client import GenerativeLanguageClient
+
 
 def index(request):
     '''index view.'''
@@ -20,3 +23,20 @@ def index(request):
     }
 
     return JsonResponse(response)
+
+
+@csrf_exempt  # Use this only if you're testing locally and don’t want to handle CSRF tokens.
+def audio_intro(request):
+    '''Post method to retrieve audio intro'''
+    if request.method not in ['GET', 'POST']:
+        return HttpResponseNotAllowed(['GET', 'POST'])
+
+    if request.method == 'GET':
+        return render(request, 'audiointro/get_audio_intro.html')
+
+    # Handle the POST request here
+    res = {
+        'result_text': 'b',
+        'result_mp3': 'c',
+    }
+    return JsonResponse(res)

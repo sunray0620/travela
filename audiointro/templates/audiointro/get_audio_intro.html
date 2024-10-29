@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Textboxes and Audio Control</title>
+</head>
+<body>
+    <h2>Query</h2>
+    <form>
+        <textarea type="text" id="query" name="query" style="width:400px;height:100px;resize:none;"></textarea><br>
+        <button style="width:400px;" type="button" onclick="alert('Go button clicked!')">Go</button><br><br>
+    </form>
+
+    <h2>Result</h2>
+    <audio controls>
+        <source src="example.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio><br>
+    <textarea id="result" name="result" style="width:400px;height:500px;resize:none;" readonly></textarea><br><br>
+</body>
+</html>
+
