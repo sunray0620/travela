@@ -5,7 +5,7 @@ This module interacts with GenerativeLanguage on Google Cloud.
 from shared.gcloud_client.constants import API_KEY
 from shared.http.http_helper import send_http_request
 
-GEMINI_MODEL = 'gemini-1.5-flash'
+GEMINI_MODEL = 'gemini-1.5-pro'
 
 
 class GenerativeLanguageClient:

@@ -16,7 +16,7 @@ class AiPlatformClient:
     def __init__(self):
         self.auth = AuthHelper()
 
-    def generate_content(self, prompt):
+    def generate_content(self, prompt) -> str:
         '''Get AI content.'''
         access_token = self.auth.get_access_token()
         headers = {
