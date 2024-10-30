@@ -43,11 +43,12 @@ elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
     client = secretmanager.SecretManagerServiceClient()
     secret_name = os.environ.get("SETTINGS_NAME", "travela_settings")
-    full_secret_name = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+    full_secret_name = f"projects/{project_id}/secrets/{secret_name}/versions/latest" # pylint: disable=invalid-name
     payload = client.access_secret_version(name=full_secret_name).payload.data.decode("UTF-8")
     env.read_env(io.StringIO(payload))
 else:
-    raise RuntimeError("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
+    # Some other environment
+    print('No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.')
 
 
 ALLOWED_HOSTS = ['*']
