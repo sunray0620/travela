@@ -5,9 +5,8 @@ import time
 from typing import Any
 
 import jwt
-from shared.http.http_helper import send_http_request
 from django.conf import settings
-
+from shared.http.http_helper import send_http_request
 
 ACCESS_TOKEN_LIFE_SPAN_SECONDS = 3600
 

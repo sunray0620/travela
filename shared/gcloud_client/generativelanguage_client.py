@@ -1,9 +1,8 @@
 '''
 This module interacts with GenerativeLanguage on Google Cloud.
 '''
-
-from shared.http.http_helper import send_http_request
 from django.conf import settings
+from shared.http.http_helper import send_http_request
 
 GEMINI_MODEL = 'gemini-1.5-pro'
 GENERATIVE_LANGUAGE_API_KEY = settings.GENERATIVE_LANGUAGE_API_KEY
