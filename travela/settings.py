@@ -22,8 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = os.path.join(BASE_DIR, '.env')
 DEBUG = False
 env = environ.Env()
-os.environ['ENV'] = 'PROD'
-os.environ['GOOGLE_CLOUD_PROJECT'] = 'procon-1'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -33,7 +31,7 @@ SECRET_KEY = 'django-insecure-abz_x^dprw-6t=hq=2iphkcvc-okg0m16^u6^mp6nenc(!)ebv
 
 # Attempt to load the Project ID into the environment, safely failing on error.
 try:
-    google.auth.default()
+    _, os.environ['GOOGLE_CLOUD_PROJECT'] = google.auth.default()
 except google.auth.exceptions.DefaultCredentialsError:
     print('Exception on google.auth.default()')
 
@@ -41,7 +39,7 @@ if os.path.isfile(env_file):
     # DEV: Use a local secret file
     print('Found local .env file.')
     env.read_env(env_file, overwrite=True)
-elif os.environ.get('ENV') == 'PROD':
+elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
     # Production
     print('Reading env from secret manager.')
     project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
