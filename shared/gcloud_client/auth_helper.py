@@ -50,7 +50,6 @@ def get_new_access_token() -> Any:
 
 def generate_jwt() -> str:
     '''Generate a signed JWT.'''
-    print(settings.GCLOUD_SERVICE_ACCT_INFO)
     client_email = settings.GCLOUD_SERVICE_ACCT_INFO['client_email']
     private_key_id = settings.GCLOUD_SERVICE_ACCT_INFO['private_key_id']
     private_key = settings.GCLOUD_SERVICE_ACCT_INFO['private_key']
@@ -65,4 +64,4 @@ def generate_jwt() -> str:
         'exp': exp,
     }
     headers = {'kid': private_key_id}
-    return jwt.encode(payload, private_key, algorithm='RS256', headers=headers)
+    return jwt.encode(payload, key=private_key, algorithm='RS256', headers=headers)

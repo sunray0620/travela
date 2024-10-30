@@ -60,12 +60,9 @@ GCLOUD_SERVICE_ACCT_INFO = {
     'type': 'service_account',
     'project_id': os.getenv('GOOGLE_CLOUD_PROJECT', 'test_project_id'),
     'private_key_id': os.getenv('SA_PRIVATE_KEY_ID', 'test_sa_private_key_id'),
-    'private_key': os.getenv('SA_PRIVATE_KEY', 'test_sa_private_key'),
+    'private_key': os.getenv('SA_PRIVATE_KEY', 'test_sa_private_key').replace('\\n', '\n'),
     'client_email': os.getenv('SA_CLIENT_EMAIL', 'test_sa_client_email'),
 }
-
-print(GENERATIVE_LANGUAGE_API_KEY)
-print(GCLOUD_SERVICE_ACCT_INFO)
 
 
 ALLOWED_HOSTS = ['*']
