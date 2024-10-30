@@ -3,30 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form with Textboxes and Audio Control</title>
+    <title>Enhanced Form with Textboxes and Audio Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #3498db;
+        }
+
+        form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #spinner {
+            display: none;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #result-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        #result-section textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            resize: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Query</h2>
-    <form>
-        <textarea type="text" id="query" name="query" style="width:400px;height:100px;resize:none;">Who is Tom Cruise? Limit your answer to 50 words</textarea><br>
-        <button style="width:400px;" type="button" onclick="sendPostRequest()">Go</button><br><br>
-    </form>
+    <div class="container">
+        <h2>Query</h2>
+        <form>
+            <textarea id="query" name="query" placeholder="Enter your query here...">Who is Tom Cruise? Limit your answer to 50 words</textarea><br>
+            <button type="button" onclick="sendPostRequest()">Go</button>
+        </form>
 
-    <h2>Result</h2>
-    <audio controls>
-        <source src="" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio><br>
-    <textarea id="result" name="result" style="width:400px;height:500px;resize:none;" readonly></textarea><br><br>
-</body>
+        <!-- Spinner Element -->
+        <div id="spinner"></div>
+
+        <!-- Result Section -->
+        <div id="result-section">
+            <h2>Result</h2>
+            <audio controls>
+                <source src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio><br>
+            <textarea id="result" name="result" readonly></textarea><br><br>
+        </div>
+    </div>
 
 <script>
     function sendPostRequest() {
-        const queryValue = document.getElementById('query').value;
+        const goButton = document.querySelector('button');
+        goButton.style.backgroundColor = '#b0b0b0';
+        goButton.disabled = true;
+        const queryTextarea = document.getElementById('query');
+        queryTextarea.readOnly = true;
+        queryTextarea.style.backgroundColor = '#e0e0e0';
+        const queryValue = queryTextarea.value;
         if (!queryValue) {
             return; // Do nothing if queryValue is empty
         }
-        
+
+        // Show the spinner and hide the result section while waiting for the response
+        document.getElementById('spinner').style.display = 'block';
+        document.getElementById('result-section').style.display = 'none';
+
         fetch('/audiointro/', {
             method: 'POST',
             headers: {
@@ -36,8 +149,19 @@
         })
         .then(response => response.json())
         .then(data => {
-            // document.getElementById('result').value = JSON.stringify(data, null, 2);
+            // Hide the spinner after getting the response
+            document.getElementById('spinner').style.display = 'none';
+            goButton.disabled = false;
+            queryTextarea.readOnly = false;
+            queryTextarea.style.backgroundColor = '#ffffff';
+            goButton.style.backgroundColor = '#3498db';
+
+            // Show the result section
+            document.getElementById('result-section').style.display = 'block';
+
+            // Update the result text area with the received data
             document.getElementById('result').value = data.result_text;
+
             // Process audio binary, and initialize it on audio control
             const audioElement = document.querySelector('audio');
             const audioSource = audioElement.querySelector('source');
@@ -47,9 +171,13 @@
             audioElement.load();
         })
         .catch((error) => {
+            // Hide the spinner if an error occurs
+            document.getElementById('spinner').style.display = 'none';
+            goButton.disabled = false;
+
             console.error('Error:', error);
         });
     }
 </script>
+</body>
 </html>
-
