@@ -65,5 +65,4 @@ def generate_jwt() -> str:
     }
     headers = {'kid': private_key_id}
     signed_token = jwt.encode(payload, key=private_key, algorithm='RS256', headers=headers)
-    print(signed_token)
     return signed_token

@@ -19,13 +19,7 @@ class AudioIntroRetriever:
     def get_audio_intro(self, query: str) -> Dict:
         '''Get an audio intro based on the prompt.'''
         result_text = self.generativelanguage_client.generate_content(query)
-        print(f'result_text: {result_text}')
-        try:
-            result_audio = self.texttospeech_client.generate_speech(result_text)
-        except Exception as e: #pylint: disable=broad-exception-caught
-            print(e)
-        print(f'Got result audio for {result_text}')
-
+        result_audio = self.texttospeech_client.generate_speech(result_text)
         return {
             'query': query,
             'result_text': result_text,
