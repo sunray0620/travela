@@ -22,8 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = os.path.join(BASE_DIR, '.env')
 DEBUG = False
 env = environ.Env()
-os.environ["ENV"] = 'PROD'
-os.environ["GOOGLE_CLOUD_PROJECT"] = 'procon-1'
+os.environ['ENV'] = 'PROD'
+os.environ['GOOGLE_CLOUD_PROJECT'] = 'procon-1'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -39,16 +39,17 @@ except google.auth.exceptions.DefaultCredentialsError:
 
 if os.path.isfile(env_file):
     # DEV: Use a local secret file
-    print('Found local .env file')
-    env.read_env(env_file)
+    print('Found local .env file.')
+    env.read_env(env_file, overwrite=True)
 elif os.environ.get('ENV') == 'PROD':
     # Production
+    print('Reading env from secret manager.')
     project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
     client = secretmanager.SecretManagerServiceClient()
     secret_name = os.environ.get('SETTINGS_NAME', 'travela_settings')
     full_secret_name = f'projects/{project_id}/secrets/{secret_name}/versions/latest' # pylint: disable=invalid-name
     payload = client.access_secret_version(name=full_secret_name).payload.data.decode('UTF-8')
-    env.read_env(io.StringIO(payload))
+    env.read_env(io.StringIO(payload), overrides=True)
 else:
     # Some other environment
     print('No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.')
