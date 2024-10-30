@@ -39,5 +39,6 @@ class TextToSpeechClient:
         resp = send_http_request(
             method='POST', url=url, json=request, headers=headers
         )
+        print(f'generate_speech: {resp}')
         resp = resp.json()
         return resp['audioContent']
