@@ -2,11 +2,11 @@
 This module interacts with GenerativeLanguage on Google Cloud.
 '''
 
-from shared.gcloud_client.constants import API_KEY
 from shared.http.http_helper import send_http_request
+from django.conf import settings
 
 GEMINI_MODEL = 'gemini-1.5-pro'
-
+GENERATIVE_LANGUAGE_API_KEY = settings.GENERATIVE_LANGUAGE_API_KEY
 
 class GenerativeLanguageClient:
     '''GenerativeLanguage Client.'''
@@ -22,7 +22,7 @@ class GenerativeLanguageClient:
         gemini_url = (
             f'https://generativelanguage.googleapis.com/v1beta/models'
             f'/{GEMINI_MODEL}'
-            f':generateContent?key={API_KEY}'
+            f':generateContent?key={GENERATIVE_LANGUAGE_API_KEY}'
         )
         request = {
             'contents': [{

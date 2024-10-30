@@ -2,11 +2,12 @@
 This module maintains access token that can be used by other gcloud calls.
 '''
 import time
-from typing import Dict, Any
+from typing import Any
 
 import jwt
-from shared.gcloud_client.constants import SERVICE_ACCT_INFO
 from shared.http.http_helper import send_http_request
+from django.conf import settings
+
 
 ACCESS_TOKEN_LIFE_SPAN_SECONDS = 3600
 
@@ -26,19 +27,19 @@ class AuthHelper:
             return self.access_token
 
         # refresh the token
-        new_token = get_new_access_token(SERVICE_ACCT_INFO)
+        new_token = get_new_access_token()
         self.access_token = new_token['access_token']
         self.access_token_type = new_token['token_type']
         self.access_token_exp_time = current_time + new_token['expires_in']
         return self.access_token
 
 
-def get_new_access_token(service_account_info: Dict[str, str]) -> Any:
+def get_new_access_token() -> Any:
     '''Get a new access token from gcloud.'''
-    token_url = service_account_info['token_uri']
+    token_url = 'https://oauth2.googleapis.com/token'
     token_data = {
         'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        'assertion': generate_jwt(service_account_info),
+        'assertion': generate_jwt(),
     }
     token_headers = {'Content-Type': 'application/json'}
 
@@ -48,18 +49,21 @@ def get_new_access_token(service_account_info: Dict[str, str]) -> Any:
     return response.json()
 
 
-def generate_jwt(service_account_info: Dict[str, str]) -> str:
+def generate_jwt() -> str:
     '''Generate a signed JWT.'''
+    print(settings.GCLOUD_SERVICE_ACCT_INFO)
+    client_email = settings.GCLOUD_SERVICE_ACCT_INFO['client_email']
+    private_key_id = settings.GCLOUD_SERVICE_ACCT_INFO['private_key_id']
+    private_key = settings.GCLOUD_SERVICE_ACCT_INFO['private_key']
+
     iat = time.time()
     exp = iat + ACCESS_TOKEN_LIFE_SPAN_SECONDS
     payload = {
-        'iss': service_account_info['client_email'],
+        'iss': client_email,
         'scope': 'https://www.googleapis.com/auth/cloud-platform',
         'aud': 'https://oauth2.googleapis.com/token',
         'iat': iat,
         'exp': exp,
     }
-    headers = {'kid': service_account_info['private_key_id']}
-    return jwt.encode(
-        payload, service_account_info['private_key'], algorithm='RS256', headers=headers
-    )
+    headers = {'kid': private_key_id}
+    return jwt.encode(payload, private_key, algorithm='RS256', headers=headers)
