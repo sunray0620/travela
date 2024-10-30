@@ -19,7 +19,9 @@ def audio_intro(request):
 
     # Handle the POST request here
     data = json.loads(request.body)
+    print(f'data: {data}')
     query = data.get('query', '')
+    print(f'query: {query}')
 
     generativelanguage_client = GenerativeLanguageClient()
     texttospeech_client = TextToSpeechClient()
