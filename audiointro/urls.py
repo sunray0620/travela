@@ -6,4 +6,5 @@ from . import views
 
 urlpatterns = [
     path('', views.audio_intro, name='audio_intro'),
+    path('download_audio', views.download_audio, name='download_audio'),
 ]
