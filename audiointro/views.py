@@ -53,3 +53,26 @@ def download_audio(request) -> str:
         'audioContent': file_content_string,
     }
     return JsonResponse(resp)
+
+
+def download_gcs_blob(request) -> str:
+    '''GET method to download GCS blob'''
+    audio_bucket_name = 'travela-bucket'
+
+    if request.GET.get('blob_name'):
+        blob_name = request.GET.get('blob_name')
+    else:
+        resp = JsonResponse({
+            'error': 'Bad Request'
+        })
+        resp.status_code = 400
+        return resp
+
+    gcs_client = GcsClient()
+    byte_array = gcs_client.download_blob(
+        bucket_name=audio_bucket_name, source_blob_name=blob_name)
+    file_content_string = base64.b64encode(byte_array).decode('ascii')
+    resp = {
+        'blobContent': file_content_string,
+    }
+    return JsonResponse(resp)
