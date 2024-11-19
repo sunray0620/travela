@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from audiointro.libs.audio_intro_retriever import AudioIntroRetriever
 from shared.gcloud_client.generativelanguage_client import GenerativeLanguageClient
-from shared.gcloud_client.texttospeech_client import TextToSpeechClient
+from shared.gcloud_client.texttospeech_http_client import TextToSpeechHttpClient
 from shared.gcloud_client.gcs_client import GcsClient
 
 def audio_intro(request):
@@ -23,8 +23,8 @@ def audio_intro(request):
     data = json.loads(request.body)
     query = data.get('query', '')
     generativelanguage_client = GenerativeLanguageClient()
-    texttospeech_client = TextToSpeechClient()
-    audio_intro_retriever = AudioIntroRetriever(generativelanguage_client, texttospeech_client)
+    texttospeech_http_client = TextToSpeechHttpClient()
+    audio_intro_retriever = AudioIntroRetriever(generativelanguage_client, texttospeech_http_client)
     resp = audio_intro_retriever.get_audio_intro(query)
     return JsonResponse(resp)
 

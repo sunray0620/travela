@@ -14,9 +14,9 @@ class AudioIntroRetrieverTests(TestCase):
         pass
 
     @patch('shared.gcloud_client.generativelanguage_client.GenerativeLanguageClient')
-    @patch('shared.gcloud_client.texttospeech_client.TextToSpeechClient')
+    @patch('shared.gcloud_client.texttospeech_http_client.TextToSpeechHttpClient')
     def test_get_audio_intro(
-        self, mock_texttospeech_client, mock_generativelanguage_client
+        self, mock_texttospeech_http_client, mock_generativelanguage_client
     ):
         '''Test get audio intro successfully.'''
         # Set up the mock clients
@@ -24,11 +24,11 @@ class AudioIntroRetrieverTests(TestCase):
         mock_generativelanguage_client.generate_content.return_value = (
             'test_result_text'
         )
-        mock_texttospeech_client = MagicMock()
-        mock_texttospeech_client.generate_speech.return_value = 'test_result_audio'
+        mock_texttospeech_http_client = MagicMock()
+        mock_texttospeech_http_client.generate_speech.return_value = 'test_result_audio'
 
         audio_intro_retriever = AudioIntroRetriever(
-            mock_generativelanguage_client, mock_texttospeech_client
+            mock_generativelanguage_client, mock_texttospeech_http_client
         )
         query = 'test_query'
         actual_ret = audio_intro_retriever.get_audio_intro(query)

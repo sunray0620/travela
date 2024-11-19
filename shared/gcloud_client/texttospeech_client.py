@@ -1,43 +1,43 @@
-
 '''
 This module interacts with TextToSpeech on Google Cloud.
 '''
-from shared.gcloud_client.auth_helper import AuthHelper
-from shared.http.http_helper import send_http_request
+from google.cloud import texttospeech
 
-class TextToSpeechClient:
+SUPPORTED_LANGUAGES = {
+    'en-US': {'language_code': 'en-US', 'voice_name': 'en-US-Journey-F'},
+    'cn-ZH': {'language_code': 'cmn-CN', 'voice_name': 'cmn-CN-Wavenet-A'}
+}
+
+class TextToSpeechHttpClient:
     '''TextToSpeech Client.'''
-
-    def __init__(self):
-        self.auth = AuthHelper()
-
-    def generate_speech(self, text) -> str:
+    def generate_speech(self, text, language) -> str:
         '''Get audio speech content.'''
-        access_token = self.auth.get_access_token()
-        headers = {
-            'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/json',
-        }
-        url = 'https://texttospeech.googleapis.com/v1beta1/text:synthesize'
-        request = {
-            'audioConfig': {
-                'audioEncoding': 'MP3',
-                'effectsProfileId': [
-                    'handset-class-device'
-                ],
-                'pitch': 0,
-                'speakingRate': 0
-            },
-            'input': {
-                'text': text
-            },
-            'voice': {
-                'languageCode': 'en-US',
-                'name': 'en-US-Journey-F'
-            }
-        }
-        resp = send_http_request(
-            method='POST', url=url, json=request, headers=headers
+        if language not in SUPPORTED_LANGUAGES:
+            return None
+        language_config = SUPPORTED_LANGUAGES[language]
+
+        # Instantiates a client
+        client = texttospeech.TextToSpeechClient()
+
+        # Set the text input to be synthesized
+        synthesis_input = texttospeech.SynthesisInput(text=text)
+
+        # Build the voice request, select the language code ("en-US") and the ssml
+        # voice gender ("neutral")
+        voice = texttospeech.VoiceSelectionParams(
+            language_code=language_config['language_code'],
+            name=language_config['voice_name']
         )
-        resp = resp.json()
-        return resp['audioContent']
+
+        # Select the type of audio file you want returned
+        audio_config = texttospeech.AudioConfig(
+            audio_encoding=texttospeech.AudioEncoding.MP3
+        )
+
+        # Perform the text-to-speech request on the text input with the selected
+        # voice parameters and audio file type
+        response = client.synthesize_speech(
+            input=synthesis_input, voice=voice, audio_config=audio_config
+        )
+
+        return response.audio_content

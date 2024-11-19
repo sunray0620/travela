@@ -4,7 +4,7 @@ The module that contains the unit tests for texttospeech_client.
 from unittest.mock import patch, MagicMock
 
 from django.test import TestCase
-from shared.gcloud_client.texttospeech_client import TextToSpeechClient
+from shared.gcloud_client.texttospeech_http_client import TextToSpeechHttpClient
 
 
 class TextToSpeechClientTests(TestCase):
@@ -13,8 +13,8 @@ class TextToSpeechClientTests(TestCase):
     def setUp(self):
         pass
 
-    @patch('shared.gcloud_client.texttospeech_client.send_http_request')
-    @patch('shared.gcloud_client.texttospeech_client.AuthHelper.get_access_token')
+    @patch('shared.gcloud_client.texttospeech_http_client.send_http_request')
+    @patch('shared.gcloud_client.texttospeech_http_client.AuthHelper.get_access_token')
     def test_generate_speech(self, auth_mock, http_post_mock):
         '''Test get speech from TextToSpeech.'''
         auth_mock.return_value = {
@@ -39,8 +39,8 @@ class TextToSpeechClientTests(TestCase):
         mock_response.json.return_value = mock_http_response
         http_post_mock.return_value = mock_response
 
-        texttospeech_client = TextToSpeechClient()
+        texttospeech_http_client = TextToSpeechHttpClient()
         text = 'test prompt'
-        resp = texttospeech_client.generate_speech(text)
+        resp = texttospeech_http_client.generate_speech(text)
         http_post_mock.assert_called_once()
         self.assertEqual(resp, 'result audio content')
